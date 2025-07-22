@@ -22,28 +22,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mymusictime.R
 import com.example.mymusictime.navigation.Screen
+import com.example.mymusictime.screens.PracticeViewModel
 
 @Composable
-fun LogSessionScreen(navController: NavController) {
+fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeViewModel = viewModel()) {
     var userName by remember { mutableStateOf(TextFieldValue("")) }
     var instrumentType by remember { mutableStateOf(TextFieldValue("")) }
     
     // Track practice time and notes for each day of the week
-    var mondayMinutes by remember { mutableStateOf(TextFieldValue("")) }
     var mondayNotes by remember { mutableStateOf(TextFieldValue("")) }
-    var tuesdayMinutes by remember { mutableStateOf(TextFieldValue("")) }
     var tuesdayNotes by remember { mutableStateOf(TextFieldValue("")) }
-    var wednesdayMinutes by remember { mutableStateOf(TextFieldValue("")) }
     var wednesdayNotes by remember { mutableStateOf(TextFieldValue("")) }
-    var thursdayMinutes by remember { mutableStateOf(TextFieldValue("")) }
     var thursdayNotes by remember { mutableStateOf(TextFieldValue("")) }
-    var fridayMinutes by remember { mutableStateOf(TextFieldValue("")) }
     var fridayNotes by remember { mutableStateOf(TextFieldValue("")) }
-    var saturdayMinutes by remember { mutableStateOf(TextFieldValue("")) }
     var saturdayNotes by remember { mutableStateOf(TextFieldValue("")) }
-    var sundayMinutes by remember { mutableStateOf(TextFieldValue("")) }
     var sundayNotes by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(
@@ -148,8 +143,8 @@ fun LogSessionScreen(navController: NavController) {
                 // Monday
                 DayInputRow(
                     dayName = stringResource(R.string.monday),
-                    minutesValue = mondayMinutes,
-                    onMinutesChange = { mondayMinutes = it },
+                    minutesValue = practiceViewModel.mondayMinutes,
+                    onMinutesChange = { practiceViewModel.mondayMinutes = it },
                     notesValue = mondayNotes,
                     onNotesChange = { mondayNotes = it }
                 )
@@ -159,8 +154,8 @@ fun LogSessionScreen(navController: NavController) {
                 // Tuesday
                 DayInputRow(
                     dayName = stringResource(R.string.tuesday),
-                    minutesValue = tuesdayMinutes,
-                    onMinutesChange = { tuesdayMinutes = it },
+                    minutesValue = practiceViewModel.tuesdayMinutes,
+                    onMinutesChange = { practiceViewModel.tuesdayMinutes = it },
                     notesValue = tuesdayNotes,
                     onNotesChange = { tuesdayNotes = it }
                 )
@@ -170,8 +165,8 @@ fun LogSessionScreen(navController: NavController) {
                 // Wednesday
                 DayInputRow(
                     dayName = stringResource(R.string.wednesday),
-                    minutesValue = wednesdayMinutes,
-                    onMinutesChange = { wednesdayMinutes = it },
+                    minutesValue = practiceViewModel.wednesdayMinutes,
+                    onMinutesChange = { practiceViewModel.wednesdayMinutes = it },
                     notesValue = wednesdayNotes,
                     onNotesChange = { wednesdayNotes = it }
                 )
@@ -181,8 +176,8 @@ fun LogSessionScreen(navController: NavController) {
                 // Thursday
                 DayInputRow(
                     dayName = stringResource(R.string.thursday),
-                    minutesValue = thursdayMinutes,
-                    onMinutesChange = { thursdayMinutes = it },
+                    minutesValue = practiceViewModel.thursdayMinutes,
+                    onMinutesChange = { practiceViewModel.thursdayMinutes = it },
                     notesValue = thursdayNotes,
                     onNotesChange = { thursdayNotes = it }
                 )
@@ -192,8 +187,8 @@ fun LogSessionScreen(navController: NavController) {
                 // Friday
                 DayInputRow(
                     dayName = stringResource(R.string.friday),
-                    minutesValue = fridayMinutes,
-                    onMinutesChange = { fridayMinutes = it },
+                    minutesValue = practiceViewModel.fridayMinutes,
+                    onMinutesChange = { practiceViewModel.fridayMinutes = it },
                     notesValue = fridayNotes,
                     onNotesChange = { fridayNotes = it }
                 )
@@ -203,8 +198,8 @@ fun LogSessionScreen(navController: NavController) {
                 // Saturday
                 DayInputRow(
                     dayName = stringResource(R.string.saturday),
-                    minutesValue = saturdayMinutes,
-                    onMinutesChange = { saturdayMinutes = it },
+                    minutesValue = practiceViewModel.saturdayMinutes,
+                    onMinutesChange = { practiceViewModel.saturdayMinutes = it },
                     notesValue = saturdayNotes,
                     onNotesChange = { saturdayNotes = it }
                 )
@@ -214,8 +209,8 @@ fun LogSessionScreen(navController: NavController) {
                 // Sunday
                 DayInputRow(
                     dayName = stringResource(R.string.sunday),
-                    minutesValue = sundayMinutes,
-                    onMinutesChange = { sundayMinutes = it },
+                    minutesValue = practiceViewModel.sundayMinutes,
+                    onMinutesChange = { practiceViewModel.sundayMinutes = it },
                     notesValue = sundayNotes,
                     onNotesChange = { sundayNotes = it }
                 )
@@ -293,8 +288,8 @@ fun LogSessionScreen(navController: NavController) {
 @Composable
 fun DayInputRow(
     dayName: String,
-    minutesValue: TextFieldValue,
-    onMinutesChange: (TextFieldValue) -> Unit,
+    minutesValue: String,
+    onMinutesChange: (String) -> Unit,
     notesValue: TextFieldValue,
     onNotesChange: (TextFieldValue) -> Unit
 ) {
@@ -312,35 +307,55 @@ fun DayInputRow(
         
         Spacer(modifier = Modifier.width(8.dp))
         
-        // Practice minutes input field
-        BasicTextField(
-            value = if (minutesValue.text.isEmpty()) TextFieldValue(stringResource(R.string.minutes)) else minutesValue,
-            onValueChange = onMinutesChange,
-            modifier = Modifier
-                .weight(1f)
-                .background(Color.White, RoundedCornerShape(8.dp))
-                .padding(8.dp),
-            textStyle = androidx.compose.ui.text.TextStyle(
-                fontSize = 14.sp,
-                color = if (minutesValue.text.isEmpty()) Color.Gray else Color.Black
+        // Practice minutes input field with placeholder
+        Box(modifier = Modifier.weight(1f)) {
+            BasicTextField(
+                value = minutesValue,
+                onValueChange = onMinutesChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
             )
-        )
+            if (minutesValue.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.minutes),
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(start = 8.dp, top = 8.dp)
+                )
+            }
+        }
         
         Spacer(modifier = Modifier.width(8.dp))
         
-        // Practice session notes input field
-        BasicTextField(
-            value = if (notesValue.text.isEmpty()) TextFieldValue(stringResource(R.string.notes)) else notesValue,
-            onValueChange = onNotesChange,
-            modifier = Modifier
-                .weight(1.5f)
-                .background(Color.White, RoundedCornerShape(8.dp))
-                .padding(8.dp),
-            textStyle = androidx.compose.ui.text.TextStyle(
-                fontSize = 14.sp,
-                color = if (notesValue.text.isEmpty()) Color.Gray else Color.Black
+        // Practice session notes input field with placeholder
+        Box(modifier = Modifier.weight(1.5f)) {
+            BasicTextField(
+                value = notesValue,
+                onValueChange = onNotesChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
             )
-        )
+            if (notesValue.text.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.notes),
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(start = 8.dp, top = 8.dp)
+                )
+            }
+        }
     }
 }
 

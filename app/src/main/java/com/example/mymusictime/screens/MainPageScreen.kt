@@ -18,11 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mymusictime.R
 import com.example.mymusictime.navigation.Screen
+import com.example.mymusictime.screens.PracticeViewModel
 
 @Composable
-fun MainPageScreen(navController: NavController) {
+fun MainPageScreen(navController: NavController, practiceViewModel: PracticeViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +69,7 @@ fun MainPageScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "0",
+                    text = practiceViewModel.totalMinutes.toString(),
                     fontSize = 48.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White

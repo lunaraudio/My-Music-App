@@ -6,6 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mymusictime.screens.MainPageScreen
 import com.example.mymusictime.screens.LogSessionScreen
+import com.example.mymusictime.screens.PreferencesScreen
+import com.example.mymusictime.screens.HelpScreen
+import com.example.mymusictime.screens.PracticeViewModel
 
 sealed class Screen(val route: String) {
     object MainPage : Screen("main_page")
@@ -15,24 +18,22 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun AppNavigation(navController: NavHostController) {
+fun AppNavigation(navController: NavHostController, practiceViewModel: PracticeViewModel) {
     NavHost(
         navController = navController,
         startDestination = Screen.MainPage.route
     ) {
         composable(Screen.MainPage.route) {
-            MainPageScreen(navController = navController)
+            MainPageScreen(navController = navController, practiceViewModel = practiceViewModel)
         }
         composable(Screen.LogSession.route) {
-            LogSessionScreen(navController = navController)
+            LogSessionScreen(navController = navController, practiceViewModel = practiceViewModel)
         }
         composable(Screen.Preferences.route) {
-            // Placeholder - user settings screen coming in next phase
-            MainPageScreen(navController = navController)
+            PreferencesScreen(navController = navController)
         }
         composable(Screen.Help.route) {
-            // Placeholder - help and tutorial screen coming in next phase
-            MainPageScreen(navController = navController)
+            HelpScreen(navController = navController)
         }
     }
 } 

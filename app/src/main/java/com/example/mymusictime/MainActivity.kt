@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mymusictime.navigation.AppNavigation
 import com.example.mymusictime.ui.theme.MyMusicTimeTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mymusictime.screens.PracticeViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +18,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyMusicTimeTheme {
                 val navController = rememberNavController()
-                AppNavigation(navController = navController)
+                val practiceViewModel: PracticeViewModel = viewModel()
+                AppNavigation(navController = navController, practiceViewModel = practiceViewModel)
             }
         }
     }
