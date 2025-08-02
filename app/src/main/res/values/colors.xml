@@ -13,4 +13,12 @@
     <color name="music_orange_light">#FFFFB74D</color>
     <color name="music_brown">#FF8D6E63</color>
     <color name="music_brown_light">#FFBCAAA4</color>
+    
+    <!-- Alternative Color Themes -->
+    <color name="music_blue">#FF2196F3</color>
+    <color name="music_blue_light">#FF64B5F6</color>
+    <color name="music_green">#FF4CAF50</color>
+    <color name="music_green_light">#FF81C784</color>
+    <color name="music_purple">#FF9C27B0</color>
+    <color name="music_purple_light">#FFBA68C8</color>
 </resources>

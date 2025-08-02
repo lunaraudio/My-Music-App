@@ -23,19 +23,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mymusictime.R
 import com.example.mymusictime.navigation.Screen
+import com.example.mymusictime.ui.theme.ThemeUtils
 
 @Composable
 fun PreferencesScreen(navController: NavController) {
     val context = LocalContext.current
     val sharedPreferences = remember { context.getSharedPreferences("MyMusicTimePrefs", 0) }
+    val colorTheme = remember { sharedPreferences.getString("color_theme", "orange") ?: "orange" }
+    
+    // Get theme colors
+    val primaryColor = ThemeUtils.getPrimaryColor(colorTheme)
     
     // Default values for preferences
-    var userName by remember { 
-        mutableStateOf(sharedPreferences.getString("user_name", "") ?: "") 
-    }
-    var defaultInstrument by remember { 
-        mutableStateOf(sharedPreferences.getString("default_instrument", "Piano") ?: "Piano") 
-    }
     var weeklyGoal by remember { 
         mutableStateOf(sharedPreferences.getInt("weekly_goal", 300).toString()) 
     }
@@ -45,8 +44,8 @@ fun PreferencesScreen(navController: NavController) {
     var reminderTime by remember { 
         mutableStateOf(sharedPreferences.getString("reminder_time", "18:00") ?: "18:00") 
     }
-    var darkMode by remember { 
-        mutableStateOf(sharedPreferences.getBoolean("dark_mode", true)) 
+    var selectedColorTheme by remember { 
+        mutableStateOf(sharedPreferences.getString("color_theme", "orange") ?: "orange") 
     }
 
     Column(
@@ -62,7 +61,7 @@ fun PreferencesScreen(navController: NavController) {
             text = "Preferences",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFFFF8C00),
+            color = primaryColor,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -78,76 +77,7 @@ fun PreferencesScreen(navController: NavController) {
                 .padding(bottom = 24.dp)
         )
 
-        // User Profile Section
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF8D6E63)
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "User Profile",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-                
-                // User Name
-                Text(
-                    text = "Your Name",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                OutlinedTextField(
-                    value = userName,
-                    onValueChange = { 
-                        userName = it
-                        sharedPreferences.edit().putString("user_name", it).apply()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFFFF8C00),
-                        unfocusedBorderColor = Color.White,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    )
-                )
-                
-                Spacer(modifier = Modifier.height(12.dp))
-                
-                // Default Instrument
-                Text(
-                    text = "Default Instrument",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                OutlinedTextField(
-                    value = defaultInstrument,
-                    onValueChange = { 
-                        defaultInstrument = it
-                        sharedPreferences.edit().putString("default_instrument", it).apply()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFFFF8C00),
-                        unfocusedBorderColor = Color.White,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    )
-                )
-            }
-        }
+
 
         // Practice Goals Section
         Card(
@@ -186,7 +116,7 @@ fun PreferencesScreen(navController: NavController) {
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFFFF8C00),
+                        focusedBorderColor = primaryColor,
                         unfocusedBorderColor = Color.White,
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White
@@ -235,8 +165,8 @@ fun PreferencesScreen(navController: NavController) {
                             sharedPreferences.edit().putBoolean("reminder_enabled", it).apply()
                         },
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color(0xFFFF8C00),
-                            checkedTrackColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
+                            checkedThumbColor = primaryColor,
+                            checkedTrackColor = primaryColor.copy(alpha = 0.5f),
                             uncheckedThumbColor = Color.White,
                             uncheckedTrackColor = Color.White.copy(alpha = 0.5f)
                         )
@@ -260,7 +190,7 @@ fun PreferencesScreen(navController: NavController) {
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFFFF8C00),
+                            focusedBorderColor = primaryColor,
                             unfocusedBorderColor = Color.White,
                             focusedTextColor = Color.White,
                             unfocusedTextColor = Color.White
@@ -291,31 +221,150 @@ fun PreferencesScreen(navController: NavController) {
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
                 
-                // Dark Mode Toggle
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                // Color Theme Selection
+                Text(
+                    text = "Color Theme",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                
+                // Theme Options
+                Column(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Dark Mode",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                    Switch(
-                        checked = darkMode,
-                        onCheckedChange = { 
-                            darkMode = it
-                            sharedPreferences.edit().putBoolean("dark_mode", it).apply()
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color(0xFFFF8C00),
-                            checkedTrackColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
-                            uncheckedThumbColor = Color.White,
-                            uncheckedTrackColor = Color.White.copy(alpha = 0.5f)
+                    // Orange Theme
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedColorTheme == "orange",
+                            onClick = { 
+                                selectedColorTheme = "orange"
+                                sharedPreferences.edit().putString("color_theme", "orange").apply()
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color(0xFFFF8C00),
+                                unselectedColor = Color.White
+                            )
                         )
-                    )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Classic Orange",
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            fontWeight = if (selectedColorTheme == "orange") FontWeight.Bold else FontWeight.Normal
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(Color(0xFFFF8C00), RoundedCornerShape(4.dp))
+                        )
+                    }
+                    
+                    // Blue Theme
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedColorTheme == "blue",
+                            onClick = { 
+                                selectedColorTheme = "blue"
+                                sharedPreferences.edit().putString("color_theme", "blue").apply()
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color(0xFF2196F3),
+                                unselectedColor = Color.White
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Ocean Blue",
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            fontWeight = if (selectedColorTheme == "blue") FontWeight.Bold else FontWeight.Normal
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(Color(0xFF2196F3), RoundedCornerShape(4.dp))
+                        )
+                    }
+                    
+                    // Green Theme
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedColorTheme == "green",
+                            onClick = { 
+                                selectedColorTheme = "green"
+                                sharedPreferences.edit().putString("color_theme", "green").apply()
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color(0xFF4CAF50),
+                                unselectedColor = Color.White
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Forest Green",
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            fontWeight = if (selectedColorTheme == "green") FontWeight.Bold else FontWeight.Normal
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(Color(0xFF4CAF50), RoundedCornerShape(4.dp))
+                        )
+                    }
+                    
+                    // Purple Theme
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedColorTheme == "purple",
+                            onClick = { 
+                                selectedColorTheme = "purple"
+                                sharedPreferences.edit().putString("color_theme", "purple").apply()
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color(0xFF9C27B0),
+                                unselectedColor = Color.White
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Sunset Purple",
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            fontWeight = if (selectedColorTheme == "purple") FontWeight.Bold else FontWeight.Normal
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(Color(0xFF9C27B0), RoundedCornerShape(4.dp))
+                        )
+                    }
                 }
             }
         }
@@ -332,7 +381,7 @@ fun PreferencesScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.MainPage.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(end = 4.dp)
             ) {
@@ -346,7 +395,7 @@ fun PreferencesScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.LogSession.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1.2f).padding(horizontal = 4.dp)
             ) {
@@ -360,7 +409,7 @@ fun PreferencesScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.Preferences.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
             ) {
@@ -374,7 +423,7 @@ fun PreferencesScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.Help.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(start = 4.dp)
             ) {

@@ -28,18 +28,29 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mymusictime.R
 import com.example.mymusictime.navigation.Screen
+import com.example.mymusictime.ui.theme.ThemeUtils
 
 @Composable
 fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeViewModel = viewModel()) {
     val context = LocalContext.current
+    val sharedPreferences = remember { context.getSharedPreferences("MyMusicTimePrefs", 0) }
+    val colorTheme = remember { sharedPreferences.getString("color_theme", "orange") ?: "orange" }
+    
+    // Get theme colors
+    val primaryColor = ThemeUtils.getPrimaryColor(colorTheme)
     
     // Initialize PracticeViewModel with context for data persistence
     LaunchedEffect(Unit) {
         practiceViewModel.initialize(context)
     }
     
-    var userName by remember { mutableStateOf(TextFieldValue("")) }
-    var instrumentType by remember { mutableStateOf(TextFieldValue("")) }
+    // Load saved name and instrument from SharedPreferences
+    var userName by remember { 
+        mutableStateOf(TextFieldValue(sharedPreferences.getString("user_name", "") ?: "")) 
+    }
+    var instrumentType by remember { 
+        mutableStateOf(TextFieldValue(sharedPreferences.getString("default_instrument", "") ?: "")) 
+    }
     
     // Track practice time and notes for each day of the week using PracticeViewModel
     var mondayMinutes by remember { mutableStateOf(TextFieldValue("")) }
@@ -81,7 +92,7 @@ fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeVi
             text = stringResource(R.string.log_my_music_time),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFFFF8C00),
+            color = primaryColor,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -119,7 +130,10 @@ fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeVi
                 )
                 BasicTextField(
                     value = userName,
-                    onValueChange = { userName = it },
+                    onValueChange = { 
+                        userName = it
+                        sharedPreferences.edit().putString("user_name", it.text).apply()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White, RoundedCornerShape(8.dp))
@@ -141,7 +155,10 @@ fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeVi
                 )
                 BasicTextField(
                     value = instrumentType,
-                    onValueChange = { instrumentType = it },
+                    onValueChange = { 
+                        instrumentType = it
+                        sharedPreferences.edit().putString("default_instrument", it.text).apply()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White, RoundedCornerShape(8.dp))
@@ -277,7 +294,7 @@ fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeVi
             Button(
                 onClick = { navController.navigate(Screen.MainPage.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(end = 4.dp)
             ) {
@@ -291,7 +308,7 @@ fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeVi
             Button(
                 onClick = { navController.navigate(Screen.LogSession.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1.2f).padding(horizontal = 4.dp)
             ) {
@@ -305,7 +322,7 @@ fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeVi
             Button(
                 onClick = { navController.navigate(Screen.Preferences.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
             ) {
@@ -319,7 +336,7 @@ fun LogSessionScreen(navController: NavController, practiceViewModel: PracticeVi
             Button(
                 onClick = { navController.navigate(Screen.Help.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(start = 4.dp)
             ) {

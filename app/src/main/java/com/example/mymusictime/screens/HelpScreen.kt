@@ -8,9 +8,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,9 +24,17 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mymusictime.R
 import com.example.mymusictime.navigation.Screen
+import com.example.mymusictime.ui.theme.ThemeUtils
 
 @Composable
 fun HelpScreen(navController: NavController) {
+    val context = LocalContext.current
+    val sharedPreferences = remember { context.getSharedPreferences("MyMusicTimePrefs", 0) }
+    val colorTheme = remember { sharedPreferences.getString("color_theme", "orange") ?: "orange" }
+    
+    // Get theme colors
+    val primaryColor = ThemeUtils.getPrimaryColor(colorTheme)
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -38,7 +48,7 @@ fun HelpScreen(navController: NavController) {
             text = "Help & Tutorial",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFFFF8C00),
+            color = primaryColor,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -224,7 +234,7 @@ fun HelpScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.MainPage.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(end = 4.dp)
             ) {
@@ -238,7 +248,7 @@ fun HelpScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.LogSession.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1.2f).padding(horizontal = 4.dp)
             ) {
@@ -252,7 +262,7 @@ fun HelpScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.Preferences.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
             ) {
@@ -266,7 +276,7 @@ fun HelpScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate(Screen.Help.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(start = 4.dp)
             ) {

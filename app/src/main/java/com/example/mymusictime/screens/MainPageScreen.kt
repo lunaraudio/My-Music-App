@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mymusictime.R
 import com.example.mymusictime.navigation.Screen
 import com.example.mymusictime.screens.PracticeViewModel
+import com.example.mymusictime.ui.theme.ThemeUtils
 import android.content.Intent
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +34,11 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
     val context = LocalContext.current
     val sharedPreferences = remember { context.getSharedPreferences("MyMusicTimePrefs", 0) }
     val userName = remember { sharedPreferences.getString("user_name", "") ?: "" }
+    val colorTheme = remember { sharedPreferences.getString("color_theme", "orange") ?: "orange" }
+    
+    // Get theme colors
+    val primaryColor = ThemeUtils.getPrimaryColor(colorTheme)
+    val successColor = ThemeUtils.getSuccessColor(colorTheme)
     
     // Initialize PracticeViewModel with context for data persistence
     LaunchedEffect(Unit) {
@@ -51,7 +57,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
             text = stringResource(R.string.app_name),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFFFF8C00),
+            color = primaryColor,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,7 +70,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                 text = "Welcome back, $userName! 👋",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFFFF8C00),
+                color = primaryColor,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -87,7 +93,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFFF8C00)
+                containerColor = primaryColor
             ),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -165,7 +171,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                             text = "$goalProgress%",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (goalProgress >= 100) Color(0xFF4CAF50) else Color(0xFFFF8C00)
+                            color = if (goalProgress >= 100) successColor else primaryColor
                         )
                         Text(
                             text = "Complete",
@@ -182,7 +188,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp),
-                    color = if (goalProgress >= 100) Color(0xFF4CAF50) else Color(0xFFFF8C00),
+                    color = if (goalProgress >= 100) successColor else primaryColor,
                     trackColor = Color.White.copy(alpha = 0.3f)
                 )
                 
@@ -191,7 +197,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                     Text(
                         text = "🎉 Amazing! You've reached your goal!",
                         fontSize = 12.sp,
-                        color = Color(0xFF4CAF50),
+                        color = successColor,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -199,7 +205,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                     Text(
                         text = "🔥 Almost there! Keep going!",
                         fontSize = 12.sp,
-                        color = Color(0xFFFF8C00),
+                        color = primaryColor,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -207,7 +213,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                     Text(
                         text = "💪 Halfway there! Great progress!",
                         fontSize = 12.sp,
-                        color = Color(0xFFFF8C00),
+                        color = primaryColor,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -245,7 +251,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
                     context.startActivity(Intent.createChooser(sendIntent, "Share Practice Results"))
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4CAF50)
+                    containerColor = successColor
                 ),
                 modifier = Modifier.weight(1f).padding(end = 8.dp)
             ) {
@@ -286,7 +292,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
             Button(
                 onClick = { navController.navigate(Screen.MainPage.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(end = 4.dp)
             ) {
@@ -300,7 +306,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
             Button(
                 onClick = { navController.navigate(Screen.LogSession.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1.2f).padding(horizontal = 4.dp)
             ) {
@@ -314,7 +320,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
             Button(
                 onClick = { navController.navigate(Screen.Preferences.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
             ) {
@@ -328,7 +334,7 @@ fun MainPageScreen(navController: NavController, practiceViewModel: PracticeView
             Button(
                 onClick = { navController.navigate(Screen.Help.route) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8C00)
+                    containerColor = primaryColor
                 ),
                 modifier = Modifier.weight(1f).padding(start = 4.dp)
             ) {
